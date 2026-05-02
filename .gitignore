@@ -1,0 +1,15 @@
+# Ignore Maven build folders
+target/
+testframeworks/target/
+
+# Ignore IDE files (IntelliJ, VS Code, Eclipse)
+.idea/
+*.iml
+.vscode/
+.classpath
+.project
+.settings/
+
+# Ignore local test reports and screenshots
+testframeworks/reports/
+testframeworks/test-output/
