@@ -1,0 +1,55 @@
+name: Automated Test Suite
+
+# Control when the workflow will run
+on:
+  push:
+    branches: [main, master, Lab04] # Added Lab04 since your branch name is Lab04
+  pull_request:
+    branches: [main, master, Lab04]
+
+jobs:
+  playwright-tests:
+    name: Playwright UI Automation
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./playwright-ecommerce
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: Run Playwright Tests
+        run: npx playwright test
+
+  api-tests:
+    name: REST-assured API Automation
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./api-automation
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Java JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: "17"
+          distribution: "temurin"
+          cache: maven
+
+      - name: Run Maven Tests
+        run: mvn clean test
