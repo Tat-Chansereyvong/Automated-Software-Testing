@@ -1,0 +1,28 @@
+# =========================
+# Node.js / Playwright (Lab 1)
+# =========================
+playwright-ecommerce/node_modules/
+playwright-ecommerce/test-results/
+playwright-ecommerce/playwright-report/
+playwright-ecommerce/blob-report/
+playwright-ecommerce/playwright/.cache/
+playwright-ecommerce/screenshots/
+
+# =========================
+# Java / Maven / Allure (Lab 2)
+# =========================
+api-automation/target/
+api-automation/allure-results/
+api-automation/.allure/
+*.class
+*.jar
+*.war
+
+# =========================
+# IDE & OS Files
+# =========================
+.vscode/
+.idea/
+*.iml
+.DS_Store
+Thumbs.db
