@@ -1,10 +1,10 @@
-name: Gatling Load Test
+name: ci-gatling
 
 on:
   push:
-    branches: [ Lab-06 ]
+    branches: [Lab06]
   pull_request:
-  workflow_dispatch:   # allow manual runs
+  workflow_dispatch: # allow manual runs
 
 jobs:
   load-test:
@@ -16,7 +16,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '21'
+          java-version: "21"
           cache: maven
 
       - name: Start backend
@@ -38,7 +38,7 @@ jobs:
           -Dusers=100 -Dramp=30 -Drps=8 -Dhold=120
 
       - name: Publish Gatling report
-        if: always()   # upload the report even when assertions fail
+        if: always() # upload the report even when assertions fail
         uses: actions/upload-artifact@v4
         with:
           name: gatling-report
