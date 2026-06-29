@@ -100,6 +100,36 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
 
+            <!-- Playwright Browser Installation -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>playwright-install</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>com.microsoft.playwright.CLI</mainClass>
+                            <arguments>
+                                <argument>install</argument>
+                            </arguments>
+                            <includePluginDependencies>true</includePluginDependencies>
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.microsoft.playwright</groupId>
+                        <artifactId>playwright</artifactId>
+                        <version>${playwright.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
             <!-- Surefire with Allure agent -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
