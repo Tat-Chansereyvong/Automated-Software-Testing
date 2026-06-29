@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — Private Cloud Storage</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 1.5rem;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        .header h1 { font-size: 1.4rem; }
+        .header-right { display: flex; gap: 1rem; align-items: center; }
+        .user-email { color: #94a3b8; font-size: 0.9rem; }
+        .logout-btn {
+            padding: 0.4rem 0.8rem;
+            border: 1px solid rgba(239,68,68,0.4);
+            border-radius: 6px;
+            background: rgba(239,68,68,0.1);
+            color: #f87171;
+            font-size: 0.85rem;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .logout-btn:hover { background: rgba(239,68,68,0.2); }
+
+        .grid { display: grid; grid-template-columns: 300px 1fr; gap: 1.5rem; }
+
+        .panel {
+            background: rgba(30, 41, 59, 0.9);
+            border: 1px solid rgba(148, 163, 184, 0.15);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+        .panel h2 { font-size: 1.1rem; margin-bottom: 1rem; }
+
+        /* Quota display */
+        .quota-card { margin-bottom: 1rem; }
+        .quota-label { font-size: 0.85rem; color: #94a3b8; margin-bottom: 0.5rem; }
+        .quota-bar-bg {
+            height: 10px;
+            background: rgba(148, 163, 184, 0.15);
+            border-radius: 999px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+        .quota-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            border-radius: 999px;
+            transition: width 0.3s;
+        }
+        .quota-text { font-size: 0.9rem; }
+        .quota-text strong { color: #60a5fa; }
+
+        /* Profile section */
+        .profile-item { margin-bottom: 0.8rem; }
+        .profile-item .label { font-size: 0.8rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; }
+        .profile-item .value { font-size: 0.95rem; }
+
+        /* File/Folder lists */
+        .item-list { list-style: none; padding: 0; }
+        .item-list li {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.6rem 0.5rem;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+            font-size: 0.9rem;
+        }
+        .item-list li:last-child { border-bottom: none; }
+        .icon { font-size: 1.1rem; }
+        .file-size { margin-left: auto; color: #64748b; font-size: 0.8rem; }
+
+        .empty-state {
+            color: #64748b;
+            font-size: 0.85rem;
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 data-testid="page-title">☁️ My Cloud Storage</h1>
+        <div class="header-right">
+            <span class="user-email" data-testid="user-email" th:text="${user.email}">user@example.com</span>
+            <a th:href="@{/logout}" class="logout-btn" data-testid="logout-btn">Logout</a>
+        </div>
+    </div>
+
+    <div class="grid">
+        <!-- Sidebar: Profile + Quota -->
+        <div>
+            <div class="panel quota-card">
+                <h2>Storage</h2>
+                <div class="quota-label">Quota Usage</div>
+                <div class="quota-bar-bg">
+                    <div class="quota-bar-fill" th:style="'width:' + ${usagePercent} + '%'"></div>
+                </div>
+                <div class="quota-text">
+                    <span data-testid="used-storage" th:text="${usedMB} + ' MB'">0 MB</span>
+                    of
+                    <span data-testid="quota" th:text="${totalMB} + ' MB'">50 MB</span>
+                    used
+                </div>
+                <div class="quota-text" style="margin-top: 0.3rem;">
+                    <strong data-testid="free-storage" th:text="${freeMB} + ' MB free'">50 MB free</strong>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2>Profile</h2>
+                <div class="profile-item">
+                    <div class="label">Display Name</div>
+                    <div class="value" data-testid="display-name" th:text="${user.displayName}">User</div>
+                </div>
+                <div class="profile-item">
+                    <div class="label">Email</div>
+                    <div class="value" th:text="${user.email}">user@example.com</div>
+                </div>
+                <div class="profile-item">
+                    <div class="label">Member Since</div>
+                    <div class="value" th:text="${#temporals.format(user.createdAt, 'yyyy-MM-dd')}">2025-01-01</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main: Folders + Files -->
+        <div>
+            <div class="panel" style="margin-bottom: 1.5rem;">
+                <h2>📁 Folders</h2>
+                <ul class="item-list" data-testid="folder-list">
+                    <li th:each="folder : ${folders}">
+                        <span class="icon">📁</span>
+                        <span th:text="${folder.name}" data-testid="folder-name">Folder</span>
+                    </li>
+                </ul>
+                <div th:if="${#lists.isEmpty(folders)}" class="empty-state" data-testid="no-folders">
+                    No folders yet
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2>📄 Files</h2>
+                <ul class="item-list" data-testid="file-list">
+                    <li th:each="file : ${files}">
+                        <span class="icon">📄</span>
+                        <span th:text="${file.name}" data-testid="file-name">file.txt</span>
+                        <span class="file-size" th:text="${file.sizeBytes < 1024 ? file.sizeBytes + ' B' : (file.sizeBytes / 1024) + ' KB'}">0 KB</span>
+                    </li>
+                </ul>
+                <div th:if="${#lists.isEmpty(files)}" class="empty-state" data-testid="no-files">
+                    No files yet
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

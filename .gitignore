@@ -1,0 +1,21 @@
+# ── Build output ──
+target/
+!target/allure-report/
+
+# ── IDE ──
+.idea/
+*.iml
+.vscode/
+.project
+.classpath
+.settings/
+
+# ── OS ──
+.DS_Store
+Thumbs.db
+
+# ── Logs ──
+*.log
+
+# ── Maven ──
+.mvn/timing.properties

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login — Private Cloud Storage</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: #e2e8f0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .card {
+            background: rgba(30, 41, 59, 0.9);
+            border: 1px solid rgba(148, 163, 184, 0.15);
+            border-radius: 16px;
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+        }
+        h1 { font-size: 1.6rem; margin-bottom: 0.5rem; }
+        .subtitle { color: #94a3b8; margin-bottom: 1.5rem; font-size: 0.9rem; }
+        label { display: block; margin-bottom: 0.3rem; font-size: 0.85rem; color: #cbd5e1; }
+        input {
+            width: 100%;
+            padding: 0.65rem 0.8rem;
+            border: 1px solid rgba(148, 163, 184, 0.25);
+            border-radius: 8px;
+            background: rgba(15, 23, 42, 0.6);
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+        input:focus { outline: none; border-color: #3b82f6; }
+        button {
+            width: 100%;
+            padding: 0.7rem;
+            border: none;
+            border-radius: 8px;
+            background: #3b82f6;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:hover { background: #2563eb; }
+        .links { margin-top: 1rem; text-align: center; font-size: 0.85rem; }
+        .links a { color: #60a5fa; text-decoration: none; }
+        .links a:hover { text-decoration: underline; }
+        .alert { padding: 0.6rem; border-radius: 8px; margin-bottom: 1rem; font-size: 0.85rem; }
+        .alert-success { background: rgba(34,197,94,0.15); color: #4ade80; border: 1px solid rgba(34,197,94,0.3); }
+        .alert-error { background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>☁️ Cloud Storage</h1>
+        <p class="subtitle">Sign in to your private drive</p>
+
+        <div th:if="${param.registered}" class="alert alert-success">
+            Account created! Please sign in.
+        </div>
+        <div th:if="${param.error}" class="alert alert-error">
+            Invalid email or password.
+        </div>
+        <div th:if="${param.logout}" class="alert alert-success">
+            You have been logged out.
+        </div>
+
+        <form method="post" th:action="@{/login}">
+            <label for="username">Email</label>
+            <input type="email" id="username" name="username" required placeholder="you@example.com"
+                   data-testid="email-input">
+
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required placeholder="••••••••"
+                   data-testid="password-input">
+
+            <button type="submit" data-testid="login-btn">Sign In</button>
+        </form>
+
+        <div class="links">
+            Don't have an account? <a th:href="@{/register}">Register</a>
+        </div>
+    </div>
+</body>
+</html>
